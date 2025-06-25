@@ -1,10 +1,10 @@
-
 package carrefourkata.driveanddeliver.model;
 
-import javax.persistence.*;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "drive_slots")
 public class DriveSlot {
 
     @Id @GeneratedValue

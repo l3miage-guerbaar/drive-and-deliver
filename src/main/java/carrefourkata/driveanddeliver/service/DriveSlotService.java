@@ -70,4 +70,8 @@ public class DriveSlotService {
 
         return result;
     }
+
+    public List<DriveSlot> getAllSlots() {
+        return driveSlotRepository.findAll();
+    }
 }

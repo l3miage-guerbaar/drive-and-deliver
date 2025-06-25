@@ -66,4 +66,8 @@ public class DeliverySlotService {
         return result;
     }
 
+    public List<DeliverySlot> getAllSlots() {
+        return deliverySlotRepository.findAll();
+    }
+
 }
