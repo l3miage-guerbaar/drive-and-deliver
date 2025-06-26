@@ -1,5 +1,14 @@
 package carrefourkata.driveanddeliver.service;
 
+import carrefourkata.driveanddeliver.model.DeliveryMode;
+import carrefourkata.driveanddeliver.model.DeliverySlot;
+import carrefourkata.driveanddeliver.repository.DeliverySlotRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class DeliverySlotService {
 
@@ -10,22 +19,15 @@ public class DeliverySlotService {
         this.deliverySlotRepository = deliverySlotRepository;
     }
 
-    // génère les slots de livraison pour les deux prochaines semaines
-    // Le dimanche est exclu
+    // génère les slots de livraison pour les deux prochaines semaines (Le dimanche est exclu)
     public void generateSlotsForNextTwoWeeks() {
         LocalDate today = LocalDate.now();
         LocalDate endDate = today.plusWeeks(2);
 
-        // parcourt au jour d'aujourd'hui jusqu'a dans deux semaines 
         for (LocalDate date = today; date.isBefore(endDate); date = date.plusDays(1)) {
             if (date.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                    List<DeliverySlot> slots = generateSlotsForDayAndMode(date);
-                    for (DeliverySlot slot : slots) {
-                        if (!deliverySlotRepository.existsByStartTimeAndMode(slot.getStartTime())) {
-                            deliverySlotRepository.save(slot)
-                        }
-                    }
-                }
+                // génère les slots pour le mode de livraison DRIVE
+                List<DeliverySlot> slots = generateSlotsForDayAndMode(date);
         }
     }
 

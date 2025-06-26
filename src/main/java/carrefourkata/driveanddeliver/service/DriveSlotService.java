@@ -18,13 +18,11 @@ public class DriveSlotService {
         this.driveSlotRepository = driveSlotRepository;
     }
 
-    // génère les slots de drive pour les deux prochaines semaines
-    // Le dimanche est exclu
+    // génère les slots de drive pour les deux prochaines semaines (Le dimanche est exclu)
     public void generateDriveSlotsForNextTwoWeeks() {
         LocalDate today = LocalDate.now();
         LocalDate endDate = today.plusWeeks(2);
 
-        // Parcourt du jour d'aujourd'hui jusqu'à dans deux semaines
         for (LocalDate date = today; date.isBefore(endDate); date = date.plusDays(1)) {
             if (date.getDayOfWeek() != DayOfWeek.SUNDAY) {
                 List<DriveSlot> slots = generateDriveSlotsForDay(date);
@@ -58,13 +56,8 @@ public class DriveSlotService {
         LocalDateTime slotEnd = LocalDateTime.of(date, end);
 
         while (!slotStart.isAfter(slotEnd.minus(interval))) {
-            DriveSlot slot = new DriveSlot();
-            slot.setStartTime(slotStart);
-            slot.setEndTime(slotStart.plus(interval));
-            slot.setMaxCapacity(capacity);
-            slot.setBookedCount(0);
+            DriveSlot slot = new DriveSlot(slotStart, slotStart.plus(interval), capacity);
             result.add(slot);
-
             slotStart = slotStart.plus(interval);
         }
 
@@ -73,5 +66,9 @@ public class DriveSlotService {
 
     public List<DriveSlot> getAllSlots() {
         return driveSlotRepository.findAll();
+    }
+
+    public List<DriveSlot> getAvailableSlots(LocalDateTime minTime) {
+        return driveSlotRepository.findAvaliableSlots(minTime);
     }
 }
