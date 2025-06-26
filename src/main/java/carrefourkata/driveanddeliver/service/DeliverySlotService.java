@@ -26,12 +26,22 @@ public class DeliverySlotService {
 
         for (LocalDate date = today; date.isBefore(endDate); date = date.plusDays(1)) {
             if (date.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                // génère les slots pour le mode de livraison DRIVE
-                List<DeliverySlot> slots = generateSlotsForDayAndMode(date);
+                List<DeliverySlot> slots = generateSlotsForDay(date);
+            
+                saveSlots(slots);
+            }
         }
     }
 
-    // génère les slots de livraison pour une journée donnée (les horaires sont de 9h à 13h et de 14h à 18h)
+    private saveSlots(List<DeliverySlot> slots){
+        for(DeliveryMode slot : slots){
+            if(!deliverySlotRepository.existsByStartTime(slot.getStartTime())) {
+                deliverySlotRepository.save(slot);
+            }
+        }
+    }
+
+    // retourne les slots de livraison pour une journée donnée (les horaires sont de 9h à 13h et de 14h à 18h)
     private List<DeliverySlot> generateSlotsForDayAndMode(LocalDate date) {
         List<DeliverySlot> slots = new ArrayList<>();
 
@@ -41,11 +51,8 @@ public class DeliverySlotService {
         return slots;
     }
 
-
-
-    // les slots sont générés en fonction du mode de livraison (DRIVE ou DELIVERY)
     // les slots DELIVERY / TODAY / ASAP sont de 1 heure avec 4 réservations maximum
-    private List<DeliverySlot> generateSlotsForPeriod(LocalDate date, DeliveryMode mode, LocalTime start, LocalTime end) {
+    private List<DeliverySlot> generateSlotsForPeriod(LocalDate date, LocalTime start, LocalTime end) {
         List<DeliverySlot> result = new ArrayList<>();
         Duration interval = Duration.ofHours(1);
         int capacity = 4;
@@ -54,14 +61,8 @@ public class DeliverySlotService {
         LocalDateTime slotEnd = LocalDateTime.of(date, end);
 
         while (!slotStart.isAfter(slotEnd.minus(interval))) {
-            DeliverySlot slot = new DeliverySlot();
-            slot.setStartTime(slotStart);
-            slot.setEndTime(slotStart.plus(interval));
-            slot.setMode(mode);
-            slot.setMaxCapacity(capacity);
-            slot.setBookedCount(0);
+            DeliverySlot slot = new DeliverySlot(slotStart, slotStart.plus(interval), capacity);
             result.add(slot);
-
             slotStart = slotStart.plus(interval);
         }
 
@@ -71,5 +72,12 @@ public class DeliverySlotService {
     public List<DeliverySlot> getAllSlots() {
         return deliverySlotRepository.findAll();
     }
+
+    public List<DeliverySlot> getAvailableSlots(LocalDateTime minTime){
+        return deliverySlotRepository.findAvailableSlots(minTime);
+    }
+
+    // manque pour le delivery today
+    // public List<DeliverySlot> get 
 
 }
