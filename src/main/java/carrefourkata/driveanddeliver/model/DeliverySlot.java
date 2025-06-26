@@ -16,9 +16,6 @@ public class DeliverySlot {
 
     private LocalDateTime endTime;
 
-    @Enumerated(EnumType.STRING)
-    private DeliveryMode mode;
-
     private int maxCapacity;
     
     private int bookedCount;
@@ -29,10 +26,9 @@ public class DeliverySlot {
     public DeliverySlot() {
     }
 
-    depublic DeliverySlot(LocalDateTime startTime, LocalDateTime endTime, DeliveryMode mode, int maxCapacity) {
+    depublic DeliverySlot(LocalDateTime startTime, LocalDateTime endTime, int maxCapacity) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.mode = mode;
         this.maxCapacity = maxCapacity;
         this.bookedCount = 0;
     }
@@ -57,13 +53,6 @@ public class DeliverySlot {
     }
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
-    }
-
-    public DeliveryMode getMode() {
-        return mode;
-    }
-    public void setMode(DeliveryMode mode) {
-        this.mode = mode;
     }
 
     public int getMaxCapacity() {
