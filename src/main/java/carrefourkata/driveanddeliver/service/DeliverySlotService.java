@@ -78,6 +78,17 @@ public class DeliverySlotService {
     }
 
     // manque pour le delivery today
-    // public List<DeliverySlot> get 
+    public List<DeliverySlot> getTodayAvailableSlots(){
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.startOfDay();
+        LocalDateTime endOfDay = today.plusDays(1).startOfDay();
+
+        LocalDateTime effectiveMinTime = minTime.isAfter(startOfDay) ? minTime : startOfDay;
+
+        return deliverySlotRepository.findByStartTimeBetween(effectiveMinTime, endOfDay)
+                .stream()
+                .filter(DeliverySlot::isAvailable)
+                .toList();
+    }
 
 }

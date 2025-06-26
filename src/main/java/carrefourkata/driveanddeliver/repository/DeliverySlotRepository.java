@@ -15,4 +15,9 @@ public interface DeliverySlotRepository extends JpaRepository<DeliverySlot, Long
     // Récupère les slots de livraison disponibles à partir d'une heure minimale
     @Query("SELECT ds FROM DriveSlot ds WHERE ds.startTime >= :minTime AND ds.bookedCount < ds.maxCapacity ORDER BY ds.startTime")
     List<DeliverySlot> findAvailableSlots(LocalDateTime minTime);
+
+    // Récupère les slots de livraison pour une période donnée
+    @Query("SELECT ds FROM DeliverySlot ds WHERE ds.startTime BETWEEN :startTime AND :endTime ORDER BY ds.startTime")
+    public List<DeliverySlot> findByStartTimeBetween(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
+
 }
